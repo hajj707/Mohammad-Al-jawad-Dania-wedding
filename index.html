@@ -9,7 +9,7 @@
   <!-- الخطوط -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Aref+Ruqaa:wght@400;700&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root{
@@ -51,7 +51,7 @@
     .slider{position:relative;height:100%;width:100%;touch-action:pan-y;overflow:hidden}
     .slides{display:flex;height:100%;width:100%;transition:transform .45s ease;will-change:transform;direction:ltr}
     .slide{
-      position:relative;flex:0 0 100%;width:100%;height:100%;padding:24px 18px env(safe-area-inset-bottom);
+      position:relative;flex:0 0 100%;width:100%;height:100%;padding:88px 18px 42px;
       display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;direction:rtl;
     }
 
@@ -65,9 +65,48 @@
     .basmala{font-size:30px;margin-bottom:20px}
     .ayah{font-size:25px;max-width:92%}
     .ayah-ref{font-size:15px;margin-top:14px;color:var(--muted)}
-    .family{font-size:25px;line-height:1.65;font-weight:600}
-    .couple-name{font-size:43px;line-height:1.35;font-weight:700}
-    .and{font-size:28px;margin:-2px 0}
+    /* العائلتان واسما العروسين: جنبًا إلى جنب */
+    .family-row,.couple-row{
+      width:min(100%,410px);display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+      align-items:center;gap:10px;direction:rtl;
+    }
+    .family-row{margin-bottom:18px}
+    .family{
+      font-family:'Noto Kufi Arabic','Noto Naskh Arabic',sans-serif;
+      font-size:17px;line-height:1.7;font-weight:500;letter-spacing:-.2px;
+    }
+    .couple-row{margin-top:15px}
+    .couple-name{
+      font-family:'Aref Ruqaa','Noto Naskh Arabic',serif;
+      font-size:39px;line-height:1.25;font-weight:700;white-space:nowrap;
+      text-shadow:0 2px 12px rgba(0,0,0,.65);
+    }
+    .and{
+      font-family:'Aref Ruqaa','Noto Naskh Arabic',serif;
+      font-size:30px;line-height:1;color:rgba(255,255,255,.92);
+      padding:0 2px;text-shadow:0 2px 10px rgba(0,0,0,.65);
+    }
+
+    /* عدّاد ثابت يظهر فوق جميع الصفحات */
+    .countdown-wrap{
+      position:absolute;top:10px;left:52px;right:52px;z-index:30;
+      display:flex;flex-direction:column;align-items:center;pointer-events:none;
+    }
+    .countdown-title{
+      font-family:'Noto Kufi Arabic','Noto Naskh Arabic',sans-serif;
+      font-size:10px;line-height:1;margin-bottom:4px;color:rgba(255,255,255,.9);
+      text-shadow:0 1px 5px rgba(0,0,0,.8);
+    }
+    .countdown{
+      direction:ltr;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;
+      width:min(100%,275px);padding:5px 7px;border:1px solid rgba(255,255,255,.55);
+      border-radius:14px;background:rgba(0,0,0,.44);backdrop-filter:blur(5px);
+      box-shadow:0 5px 18px rgba(0,0,0,.18);
+    }
+    .count-unit{display:flex;flex-direction:column;align-items:center;min-width:0}
+    .count-num{font-family:'Noto Kufi Arabic',sans-serif;font-size:15px;line-height:1.1;font-weight:600}
+    .count-label{font-family:'Noto Kufi Arabic',sans-serif;font-size:8px;line-height:1.25;opacity:.82;margin-top:2px}
+    .countdown-finished{font-family:'Aref Ruqaa',serif;font-size:20px;line-height:1.2;padding:4px 8px}
 
     .card{background:var(--panel);border-radius:18px;padding:16px 14px;box-shadow:0 6px 20px rgba(0,0,0,.2);backdrop-filter:saturate(110%) blur(2px)}
     .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:12px;background:transparent;border:1px solid var(--border);color:#fff;font-weight:600;text-decoration:none;font-family:inherit}
@@ -104,7 +143,14 @@
     .start-sub{font-size:17px;opacity:.9;font-family:'Noto Naskh Arabic',serif}
 
     @media (max-width:360px){
-      .lg{font-size:36px}.md{font-size:24px}.ayah{font-size:22px}.basmala{font-size:27px}.couple-name{font-size:37px}.family{font-size:22px}.place{font-size:26px}
+      .lg{font-size:36px}.md{font-size:24px}.ayah{font-size:22px}.basmala{font-size:27px}.place{font-size:26px}
+      .family-row,.couple-row{gap:6px}
+      .family{font-size:14px;line-height:1.65}
+      .couple-name{font-size:31px}
+      .and{font-size:25px}
+      .countdown-wrap{left:48px;right:48px}
+      .countdown{gap:2px;padding:5px}
+      .count-num{font-size:13px}.count-label{font-size:7px}
       .start-circle{width:150px;height:150px;font-size:27px}
     }
   </style>
@@ -122,6 +168,15 @@
 
   <div class="frame">
     <div class="phone" id="phone">
+      <div class="countdown-wrap" aria-live="polite">
+        <div class="countdown-title">باقي على فرحتنا</div>
+        <div class="countdown" id="countdown">
+          <div class="count-unit"><span class="count-num" id="cd-days">٠٠</span><span class="count-label">يوم</span></div>
+          <div class="count-unit"><span class="count-num" id="cd-hours">٠٠</span><span class="count-label">ساعة</span></div>
+          <div class="count-unit"><span class="count-num" id="cd-minutes">٠٠</span><span class="count-label">دقيقة</span></div>
+          <div class="count-unit"><span class="count-num" id="cd-seconds">٠٠</span><span class="count-label">ثانية</span></div>
+        </div>
+      </div>
       <div class="topbar"><button id="menuBtn" class="hamburger" aria-label="فتح القائمة"><span></span></button></div>
       <button id="musicBtn" class="music" aria-label="تشغيل أو إيقاف الموسيقى">♪</button>
       <button id="unlockAudio" class="snack hidden">🔊 اضغط لتشغيل الصوت</button>
@@ -154,13 +209,17 @@
 
           <!-- الصفحة الثانية: العائلتان والدعوة -->
           <article class="slide" aria-label="دعوة العائلتين">
-            <div class="family">السيد علي جواد شحيتلي وعائلته</div>
-            <div class="and">و</div>
-            <div class="family">السيد حسين محمد حسن وعائلته</div>
-            <div class="title sm muted" style="margin-top:18px;max-width:92%;">يتشرفان بدعوتكم لحضور حفل زفاف ولديهما</div>
-            <div class="couple-name" style="margin-top:14px;">محمد الجواد</div>
-            <div class="and">و</div>
-            <div class="couple-name">دانيا</div>
+            <div class="family-row">
+              <div class="family">السيد علي جواد شحيتلي وعائلته</div>
+              <div class="and">و</div>
+              <div class="family">السيد حسين محمد حسن وعائلته</div>
+            </div>
+            <div class="title sm muted" style="max-width:92%;">يتشرفان بدعوتكم لحضور حفل زفاف ولديهما</div>
+            <div class="couple-row">
+              <div class="couple-name">محمد الجواد</div>
+              <div class="and">و</div>
+              <div class="couple-name">دانيا</div>
+            </div>
           </article>
 
           <!-- الصفحة الثالثة: الزمان والمكان -->
@@ -228,6 +287,35 @@
   <audio id="bgm" src="invite-music.mp3" preload="auto" loop autoplay playsinline></audio>
 
   <script>
+  /* العدّاد التنازلي: الأربعاء 19 آب 2026، الساعة 7:30 مساءً بتوقيت لبنان */
+  var weddingDate = new Date('2026-08-19T19:30:00+03:00');
+  var arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+  function toArabicDigits(value){
+    return String(value).replace(/\d/g,function(d){return arabicDigits[Number(d)];});
+  }
+  function pad2(value){ return value < 10 ? '0' + value : String(value); }
+  function updateCountdown(){
+    var now = new Date();
+    var diff = weddingDate.getTime() - now.getTime();
+    var countdownEl = document.getElementById('countdown');
+    if(!countdownEl) return;
+    if(diff <= 0){
+      countdownEl.innerHTML = '<div class="countdown-finished" style="grid-column:1/-1;direction:rtl;">اليوم فرحتنا ♡</div>';
+      return;
+    }
+    var totalSeconds = Math.floor(diff / 1000);
+    var days = Math.floor(totalSeconds / 86400);
+    var hours = Math.floor((totalSeconds % 86400) / 3600);
+    var minutes = Math.floor((totalSeconds % 3600) / 60);
+    var seconds = totalSeconds % 60;
+    document.getElementById('cd-days').textContent = toArabicDigits(days);
+    document.getElementById('cd-hours').textContent = toArabicDigits(pad2(hours));
+    document.getElementById('cd-minutes').textContent = toArabicDigits(pad2(minutes));
+    document.getElementById('cd-seconds').textContent = toArabicDigits(pad2(seconds));
+  }
+  updateCountdown();
+  setInterval(updateCountdown,1000);
+
   /* تبديل صور الخلفية كل 5 ثوانٍ */
   var bgImgs = Array.prototype.slice.call(document.querySelectorAll('.bg img'));
   var bgIndex = 0;
